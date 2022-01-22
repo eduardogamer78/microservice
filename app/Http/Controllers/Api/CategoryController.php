@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreUpdateCategory;
 use App\Http\Resources\CategoryResource;
 use App\Models\Category;
 use Illuminate\Http\Request;
@@ -33,43 +34,48 @@ class CategoryController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreUpdateCategory $request)
     {
-        $category = $this->repository->create($request->all());
+        $category = $this->repository->create($request->validated());
         return new CategoryResource($category);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  String  $url
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($url)
     {
-        //
+       $category = $this->repository->where('url', $url)->firstOrFail();
+       return new CategoryResource($category);
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  String  $url
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(StoreUpdateCategory $request, $url)
     {
-        //
+        $category = $this->repository->where('url', $url)->firstOrFail();
+        $category->update($request->validated());
+        return response()->json(['message' => 'success']);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  String  $url
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($url)
     {
-        //
+        $category = $this->repository->where('url', $url)->firstOrFail();
+        $category->delete();
+        return response()->json(['message' => 'Deleted'], 204);
     }
 }

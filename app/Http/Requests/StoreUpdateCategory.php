@@ -24,7 +24,8 @@ class StoreUpdateCategory extends FormRequest
     public function rules()
     {
         return [
-            //
+            'title' => 'required|min:3|max:150|unique:categories',
+            'description' => 'required|min:3|max:255',
         ];
     }
 }
